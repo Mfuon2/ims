@@ -2,7 +2,6 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Investor } from '../investors/entities/investor.entity';
 import { MongoRepository } from 'typeorm';
 import { InvestorDocument } from './entities/document.entity';
 import { dtoToEntity } from '../utils/inverstors.mapper';
@@ -92,6 +91,5 @@ export class DocumentsService {
     } catch (e) {
       return FailResponse(null, `Error while updating document (${e.message})`);
     }
-    return `This action removes a #${id} document`;
   }
 }

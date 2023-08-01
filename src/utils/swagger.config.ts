@@ -1,4 +1,4 @@
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const config = new DocumentBuilder()
   .setTitle('ims*')

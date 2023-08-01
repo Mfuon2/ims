@@ -1,12 +1,11 @@
 import {
-  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
   Generated,
-  ObjectIdColumn, Timestamp,
-  UpdateDateColumn
-} from "typeorm";
+  ObjectIdColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('documents')
 export class InvestorDocument {

@@ -19,7 +19,6 @@ export class InvestorAccountEntity {
   cumulative_income = 0.0;
   market_value = 0.0;
   is_active = false;
-
 }
 
 export class InvestorAddressEntity {

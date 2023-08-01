@@ -4,6 +4,7 @@ import { InvestorsModule } from './investors/investors.module';
 import { TypeOrmService } from './database/type-orm.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DocumentsModule } from './documents/documents.module';
+import { AccountsModule } from './accounts/accounts.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { DocumentsModule } from './documents/documents.module';
       useClass: TypeOrmService,
     }),
     DocumentsModule,
+    AccountsModule,
   ],
   controllers: [],
   providers: [AppService, TypeOrmService, InvestorsModule, DocumentsModule],

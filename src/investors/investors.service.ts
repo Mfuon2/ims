@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateInvestorDto } from './dto/create-investor.dto';
 import { Investor } from './entities/investor.entity';
 import { UpdateInvestorDto } from './dto/update-investor.dto';
@@ -17,15 +17,17 @@ import { log } from '../main';
 export class InvestorsService {
   constructor(
     @InjectRepository(Investor)
-    private readonly userRepository: MongoRepository<Investor>,
+    private readonly repository: MongoRepository<Investor>,
   ) {}
+
   async createInvestor(
     createInvestorDto: CreateInvestorDto,
   ): Promise<ApiResponse<Investor>> {
     try {
       const investor = await dtoToEntity(createInvestorDto, Investor);
+      log.warn(JSON.stringify(investor));
       return SuccessResponse(
-        await this.userRepository.save(investor),
+        await this.repository.save(investor),
         'Investor Saved Successfully',
       );
     } catch (e) {
@@ -33,17 +35,22 @@ export class InvestorsService {
     }
   }
 
-  async findAllInvestors(): Promise<Investor[]> {
-    return await this.userRepository.find();
+  async findAllInvestors(): Promise<ApiResponse<any>> {
+    try {
+      const results = await this.repository.find();
+      return SuccessResponse(results, `Retrieved Successfully`);
+    } catch (e) {
+      return FailResponse(null, `Retrieving records failed`);
+    }
   }
 
   async findOneInvestor(investor_id: string): Promise<ApiResponse<any>> {
     let results = null;
     const investorId = new ObjectId(investor_id);
     try {
-      results = await this.userRepository.findOneBy({ _id: investorId });
+      results = await this.repository.findOneBy({ _id: investorId });
       if (results == null) {
-        throw new NotFoundException(`Error while checking up records`);
+        return FailResponse(results, `Error while checking up records`);
       }
       return SuccessResponse(results, `Success`);
     } catch (e) {
@@ -61,11 +68,42 @@ export class InvestorsService {
     });
   }
 
-  updateInvestor(id: string, updateInvestorDto: UpdateInvestorDto) {
-    return `This action updates a #${id} investor`;
+  async updateInvestor(id: string, dto: UpdateInvestorDto) {
+    try {
+      const doc = await dtoToEntity(dto, Investor);
+      const investor = await this.repository.findOneBy({
+        _id: new ObjectId(id),
+      });
+      if (!investor) {
+        return FailResponse(null, `Investor not found`);
+      }
+      investor.updated_at = new Date();
+      const results = await this.repository.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: doc },
+      );
+      return SuccessResponse(results, `Investor updated successfully`);
+    } catch (e) {
+      return FailResponse(null, `Error while updating investor (${e.message})`);
+    }
   }
 
-  removeInvestor(id: number) {
-    return `This action removes a #${id} investor`;
+  async removeInvestor(id: string) {
+    try {
+      const investor = await this.repository.findOneBy({
+        _id: new ObjectId(id),
+      });
+      if (!investor) {
+        return FailResponse(null, `Investor not found`);
+      }
+
+      investor.updated_at = new Date();
+      investor.isDeleted = true;
+
+      const results = await this.repository.save(investor);
+      return SuccessResponse(results, `Investor removed successfully`);
+    } catch (e) {
+      return FailResponse(null, `Error while updating investor (${e.message})`);
+    }
   }
 }
