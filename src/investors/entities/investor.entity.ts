@@ -1,11 +1,12 @@
 import {
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
   Generated,
   ObjectIdColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
 import { DataEncryptionTransformerConfig } from '../../utils/encryption.config';
 import { EncryptionTransformer } from 'typeorm-encrypted';
 
@@ -48,10 +49,14 @@ export class Investor {
 
   @Column({ name: 'tax_number', nullable: false })
   tax_number: string;
-
+  @Column({ default: false })
+  isDeleted = false;
   @CreateDateColumn()
   created_at: Date;
-
+  @BeforeUpdate()
+  updateDates() {
+    this.updated_at = new Date();
+  }
   @UpdateDateColumn()
   updated_at: Date;
 }

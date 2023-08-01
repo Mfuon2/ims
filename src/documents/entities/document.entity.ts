@@ -1,13 +1,14 @@
 import {
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
   Generated,
-  ObjectIdColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  ObjectIdColumn, Timestamp,
+  UpdateDateColumn
+} from "typeorm";
 
-@Entity('investor_documents')
+@Entity('documents')
 export class InvestorDocument {
   @ObjectIdColumn({ unique: true })
   @Generated('uuid')
@@ -18,9 +19,10 @@ export class InvestorDocument {
   investor_id: string;
   @Column()
   document_url: string;
+  @Column({ default: false })
+  isDeleted = false;
   @CreateDateColumn()
   created_at: Date;
-
   @UpdateDateColumn()
   updated_at: Date;
 }

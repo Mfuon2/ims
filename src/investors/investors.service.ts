@@ -5,12 +5,13 @@ import { UpdateInvestorDto } from './dto/update-investor.dto';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { dtoToEntity } from '../utils/inverstors.mapper';
+import { ObjectId } from 'mongodb';
 import {
   ApiResponse,
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
-import { log } from "../main";
+import { log } from '../main';
 
 @Injectable()
 export class InvestorsService {
@@ -18,7 +19,7 @@ export class InvestorsService {
     @InjectRepository(Investor)
     private readonly userRepository: MongoRepository<Investor>,
   ) {}
-  async create(
+  async createInvestor(
     createInvestorDto: CreateInvestorDto,
   ): Promise<ApiResponse<Investor>> {
     try {
@@ -32,18 +33,27 @@ export class InvestorsService {
     }
   }
 
-  async findAll(): Promise<Investor[]> {
+  async findAllInvestors(): Promise<Investor[]> {
     return await this.userRepository.find();
   }
 
-  async findOne(investor_id: string): Promise<Investor> {
-    return await this.userRepository.findOneBy({ _id: investor_id });
+  async findOneInvestor(investor_id: string): Promise<ApiResponse<any>> {
+    let results = null;
+    const investorId = new ObjectId(investor_id);
+    try {
+      results = await this.userRepository.findOneBy({ _id: investorId });
+      if (results == null) {
+        throw new NotFoundException(`Error while checking up records`);
+      }
+      return SuccessResponse(results, `Success`);
+    } catch (e) {
+      return FailResponse(results, `Failed with error ${e.message}`);
+    }
   }
 
   async investorExists(investor_id: string): Promise<boolean> {
     let check = false;
-    return await this.findOne(investor_id).then((r) => {
-      log.warn(r);
+    return await this.findOneInvestor(investor_id).then((r) => {
       if (r != null) {
         check = true;
         return check;
@@ -51,11 +61,11 @@ export class InvestorsService {
     });
   }
 
-  update(id: number, updateInvestorDto: UpdateInvestorDto) {
+  updateInvestor(id: string, updateInvestorDto: UpdateInvestorDto) {
     return `This action updates a #${id} investor`;
   }
 
-  remove(id: number) {
+  removeInvestor(id: number) {
     return `This action removes a #${id} investor`;
   }
 }

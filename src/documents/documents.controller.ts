@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('documents')
 @ApiTags('documents')
@@ -11,26 +11,29 @@ export class DocumentsController {
 
   @Post()
   async create(@Body() createDocumentDto: CreateDocumentDto) {
-    return await this.documentsService.create(createDocumentDto);
+    return await this.documentsService.createDocument(createDocumentDto);
   }
 
   @Get()
-  findAll() {
-    return this.documentsService.findAll();
+  async findAll() {
+    return await this.documentsService.findAllDocuments();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.documentsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.documentsService.findOneDocument(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
-    return this.documentsService.update(+id, updateDocumentDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateDocumentDto: UpdateDocumentDto,
+  ) {
+    return this.documentsService.updateDocument(id, updateDocumentDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.documentsService.remove(+id);
+    return this.documentsService.removeDocument(id);
   }
 }

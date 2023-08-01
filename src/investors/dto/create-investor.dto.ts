@@ -1,5 +1,3 @@
-import { Column, CreateDateColumn, Entity, UpdateDateColumn } from "typeorm";
-
 export class CreateInvestorDto {
   fullName: string;
   clientCode: string;

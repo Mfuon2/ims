@@ -12,27 +12,30 @@ export class InvestorsController {
   @Post()
   @ApiBody({ type: CreateInvestorDto })
   async create(@Body() createInvestorDto: CreateInvestorDto) {
-    return await this.investorsService.create(createInvestorDto);
+    return await this.investorsService.createInvestor(createInvestorDto);
   }
 
   @Get()
   @ApiResponse({ type: [CreateInvestorDto] })
   async findAll() {
-    return await this.investorsService.findAll();
+    return await this.investorsService.findAllInvestors();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.investorsService.findOne(id);
+    return this.investorsService.findOneInvestor(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInvestorDto: UpdateInvestorDto) {
-    return this.investorsService.update(+id, updateInvestorDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateInvestorDto: UpdateInvestorDto,
+  ) {
+    return this.investorsService.updateInvestor(id, updateInvestorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.investorsService.remove(+id);
+    return this.investorsService.removeInvestor(+id);
   }
 }
