@@ -5,8 +5,8 @@ import {
   Entity,
   Generated,
   ObjectIdColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 import { DataEncryptionTransformerConfig } from '../../utils/encryption.config';
 import { EncryptionTransformer } from 'typeorm-encrypted';
 
@@ -19,13 +19,17 @@ export class Investor {
   @Column({ name: 'full_name' })
   fullName: string;
 
-  @Column({ name: 'client_code', nullable: false })
-  clientCode: string;
+  @Column({
+    name: 'code',
+    nullable: false,
+  })
+  code: string;
 
-  @Column({ name: 'email', nullable: false })
+  @Column({ name: 'email' })
   email: string;
   @Column({
     name: 'mobile',
+    unique: true,
     nullable: false,
     transformer: new EncryptionTransformer(DataEncryptionTransformerConfig),
   })
@@ -141,5 +145,3 @@ export class InvestorAddressEntity {
   @UpdateDateColumn()
   updated_at: Date;
 }
-
-
