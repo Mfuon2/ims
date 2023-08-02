@@ -54,66 +54,9 @@ export class Investor {
   @Column({ name: 'tax_number', nullable: false })
   tax_number: string;
   @Column({ default: false })
-  isDeleted = false;
+  is_deleted = false;
   @CreateDateColumn()
   created_at: Date;
-  @BeforeUpdate()
-  updateDates() {
-    this.updated_at = new Date();
-  }
-  @UpdateDateColumn()
-  updated_at: Date;
-}
-
-@Entity()
-export class InvestorAccountEntity {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  account_id: string;
-
-  @Column({ name: 'fund_name', nullable: false })
-  fund_name: string;
-  @Column()
-  units = 0.0;
-  @Column()
-  unit_price = 0.0;
-  @Column()
-  balance = 0.0;
-  @Column()
-  accountNumber = 0.0;
-  @Column()
-  investor_id: string;
-  @Column()
-  cumulative_income = 0.0;
-  @Column()
-  market_value = 0.0;
-  @Column()
-  is_active = false;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
-}
-
-@Entity()
-export class InvestorTransactionEntity {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  transactions_id: string;
-  @Column()
-  mode: string;
-  @Column()
-  transaction_type;
-  @Column({ nullable: false })
-  investor_id: string;
-  @Column({ nullable: false })
-  account_id: string;
-  amount = 0.0;
-  @CreateDateColumn()
-  created_at: Date;
-
   @UpdateDateColumn()
   updated_at: Date;
 }

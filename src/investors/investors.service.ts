@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { dtoToEntity } from '../utils/inverstors.mapper';
 import { ObjectId } from 'mongodb';
 import {
-  ApiResponse,
+  CustomApiResponse,
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
@@ -22,10 +22,9 @@ export class InvestorsService {
 
   async createInvestor(
     createInvestorDto: CreateInvestorDto,
-  ): Promise<ApiResponse<Investor>> {
+  ): Promise<CustomApiResponse<Investor>> {
     try {
       const investor = await dtoToEntity(createInvestorDto, Investor);
-      log.warn(JSON.stringify(investor));
       return SuccessResponse(
         await this.repository.save(investor),
         'Investor Saved Successfully',
@@ -35,7 +34,7 @@ export class InvestorsService {
     }
   }
 
-  async findAllInvestors(): Promise<ApiResponse<any>> {
+  async findAllInvestors(): Promise<CustomApiResponse<any>> {
     try {
       const results = await this.repository.find();
       return SuccessResponse(results, `Retrieved Successfully`);
@@ -44,7 +43,7 @@ export class InvestorsService {
     }
   }
 
-  async findOneInvestor(investor_id: string): Promise<ApiResponse<any>> {
+  async findOneInvestor(investor_id: string): Promise<CustomApiResponse<any>> {
     let results = null;
     const investorId = new ObjectId(investor_id);
     try {
@@ -98,7 +97,7 @@ export class InvestorsService {
       }
 
       investor.updated_at = new Date();
-      investor.isDeleted = true;
+      investor.is_deleted = true;
 
       const results = await this.repository.save(investor);
       return SuccessResponse(results, `Investor removed successfully`);

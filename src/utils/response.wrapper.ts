@@ -1,4 +1,4 @@
-export interface ApiResponse<T> {
+export interface CustomApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
@@ -8,7 +8,7 @@ export const SuccessResponse = <T>(
   data: T,
   message: string,
   success = true,
-): ApiResponse<T> => {
+): CustomApiResponse<T> => {
   return {
     success,
     message,
@@ -20,7 +20,7 @@ export const FailResponse = <T>(
   data: T,
   message: string,
   success = false,
-): ApiResponse<T> => {
+): CustomApiResponse<T> => {
   return {
     success,
     message,

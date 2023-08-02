@@ -11,7 +11,7 @@ import {
 export class InvestorDocument {
   @ObjectIdColumn({ unique: true })
   @Generated('uuid')
-  document_id: string;
+  _id: string;
   @Column()
   document_type: string;
   @Column({ nullable: false })
@@ -19,7 +19,7 @@ export class InvestorDocument {
   @Column()
   document_url: string;
   @Column({ default: false })
-  isDeleted = false;
+  is_deleted = false;
   @CreateDateColumn()
   created_at: Date;
   @UpdateDateColumn()

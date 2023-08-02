@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import {
-  ApiResponse,
+  CustomApiResponse,
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
@@ -21,7 +21,7 @@ export class AccountsService {
 
   async createAccount(
     createAccountDto: CreateAccountDto,
-  ): Promise<ApiResponse<Account>> {
+  ): Promise<CustomApiResponse<Account>> {
     try {
       const account = await dtoToEntity(createAccountDto, Account);
       console.warn(JSON.stringify(account));
@@ -34,7 +34,7 @@ export class AccountsService {
     }
   }
 
-  async findAllAccounts(): Promise<ApiResponse<Account[]>> {
+  async findAllAccounts(): Promise<CustomApiResponse<Account[]>> {
     try {
       const results = await this.repository.find();
       return SuccessResponse(results, `Accounts Retrieved Successfully`);
@@ -43,7 +43,7 @@ export class AccountsService {
     }
   }
 
-  async findOneAccount(account_id: string): Promise<ApiResponse<Account>> {
+  async findOneAccount(account_id: string): Promise<CustomApiResponse<Account>> {
     let result = null;
     const accountId = new ObjectId(account_id);
     try {
@@ -82,7 +82,7 @@ export class AccountsService {
     }
   }
 
-  async removeAccount(id: string): Promise<ApiResponse<any>> {
+  async removeAccount(id: string): Promise<CustomApiResponse<any>> {
     try {
       const account = await this.repository.findOneBy({
         _id: new ObjectId(id),
@@ -92,7 +92,7 @@ export class AccountsService {
       }
 
       account.updated_at = new Date();
-      account.isDeleted = true;
+      account.is_deleted = true;
 
       const result = await this.repository.save(account);
       return SuccessResponse(result, `Account removed successfully`);
