@@ -7,7 +7,7 @@ import { InvestorDocument } from './entities/document.entity';
 import { dtoToEntity } from '../utils/inverstors.mapper';
 import { InvestorsService } from '../investors/investors.service';
 import {
-  ApiResponse,
+  CustomApiResponse,
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
@@ -23,7 +23,7 @@ export class DocumentsService {
   ) {}
   async createDocument(
     dto: CreateDocumentDto,
-  ): Promise<ApiResponse<InvestorDocument>> {
+  ): Promise<CustomApiResponse<InvestorDocument>> {
     try {
       const investor: boolean = await this.userService.investorExists(
         dto.investor_id,
@@ -51,7 +51,7 @@ export class DocumentsService {
     }
   }
 
-  async findOneDocument(id: string): Promise<ApiResponse<InvestorDocument>> {
+  async findOneDocument(id: string): Promise<CustomApiResponse<InvestorDocument>> {
     let results = null;
     try {
       const documentId = new ObjectId(id);
@@ -82,7 +82,7 @@ export class DocumentsService {
         _id: new ObjectId(id),
       });
       existing.updated_at = new Date();
-      existing.isDeleted = true;
+      existing.is_deleted = true;
       const results = await this.repository.findOneAndUpdate(
         { _id: new ObjectId(id) },
         { $set: existing },
