@@ -11,6 +11,7 @@ import { ObjectId } from 'mongodb';
 import { dtoToEntity } from '../utils/inverstors.mapper';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { log } from "../main";
 
 @Injectable()
 export class AccountsService {
@@ -43,7 +44,9 @@ export class AccountsService {
     }
   }
 
-  async findOneAccount(account_id: string): Promise<CustomApiResponse<Account>> {
+  async findOneAccount(
+    account_id: string,
+  ): Promise<CustomApiResponse<Account>> {
     let result = null;
     const accountId = new ObjectId(account_id);
     try {

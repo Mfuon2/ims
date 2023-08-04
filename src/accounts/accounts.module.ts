@@ -9,5 +9,6 @@ import { Account } from './entities/account.entity';
   controllers: [AccountsController],
   providers: [AccountsService, MongoRepository<Account>],
   imports: [TypeOrmModule.forFeature([Account])],
+  exports: [AccountsService],
 })
 export class AccountsModule {}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
@@ -11,19 +11,26 @@ import {
 } from '../utils/response.wrapper';
 import { dtoToEntity } from '../utils/inverstors.mapper';
 import { ObjectId } from 'mongodb';
+import { AccountsService } from '../accounts/accounts.service';
 
 @Injectable()
 export class TransactionsService {
+  @Inject()
+  private readonly accountService: AccountsService;
   constructor(
     @InjectRepository(Transaction)
     private readonly repository: MongoRepository<Transaction>,
   ) {}
 
   async createTransaction(
-    createTransactionDto: CreateTransactionDto,
+    dto: CreateTransactionDto,
   ): Promise<CustomApiResponse<Transaction>> {
     try {
-      const transaction = await dtoToEntity(createTransactionDto, Transaction);
+      const transaction = await dtoToEntity(dto, Transaction);
+      const exist = await this.accountService.accountExists(dto.account_id);
+      if (!exist) {
+        throw new NotFoundException(`Account was not found`);
+      }
       return SuccessResponse(
         await this.repository.save(transaction),
         'Transaction Saved Successfully',

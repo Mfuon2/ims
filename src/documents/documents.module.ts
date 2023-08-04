@@ -5,6 +5,7 @@ import { MongoRepository } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InvestorDocument } from './entities/document.entity';
 import { InvestorsModule } from '../investors/investors.module';
+import { AccountsModule } from "../accounts/accounts.module";
 
 @Module({
   controllers: [DocumentsController],
