@@ -58,13 +58,8 @@ export class InvestorsService {
   }
 
   async investorExists(investor_id: string): Promise<boolean> {
-    let check = false;
-    return await this.findOneInvestor(investor_id).then((r) => {
-      if (r != null) {
-        check = true;
-        return check;
-      }
-    });
+    const investor = await this.findOneInvestor(investor_id);
+    return investor.success;
   }
 
   async updateInvestor(id: string, dto: UpdateInvestorDto) {

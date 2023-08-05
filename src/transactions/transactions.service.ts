@@ -12,11 +12,25 @@ import {
 import { dtoToEntity } from '../utils/inverstors.mapper';
 import { ObjectId } from 'mongodb';
 import { AccountsService } from '../accounts/accounts.service';
+import { InvestorsService } from '../investors/investors.service';
+import { AssetsService } from '../assets/assets.service';
+import { log } from '../main';
+import { DepositLogicService } from "../business/deposit-logic.service";
 
 @Injectable()
 export class TransactionsService {
   @Inject()
   private readonly accountService: AccountsService;
+
+  @Inject()
+  private readonly investor: InvestorsService;
+
+  @Inject()
+  private readonly assets: AssetsService;
+
+  @Inject()
+  private readonly depositLogic: DepositLogicService;
+
   constructor(
     @InjectRepository(Transaction)
     private readonly repository: MongoRepository<Transaction>,
@@ -27,10 +41,25 @@ export class TransactionsService {
   ): Promise<CustomApiResponse<Transaction>> {
     try {
       const transaction = await dtoToEntity(dto, Transaction);
-      const exist = await this.accountService.accountExists(dto.account_id);
-      if (!exist) {
+      const exist = await this.accountService.findOneAccount(dto.account_id);
+      if (!exist.success) {
         throw new NotFoundException(`Account was not found`);
       }
+
+      const investor = await this.investor.investorExists(dto.investor_id);
+      if (!investor) {
+        throw new NotFoundException(`Investor was not found`);
+      }
+
+      const assets = await this.assets.assetExists(dto.asset_id);
+      if (!assets) {
+        throw new NotFoundException(`Asset class was not found`);
+      }
+      const accountUpdated = await this.depositLogic.updateInvestorAccount(
+        dto,
+        exist.data,
+      );
+      log.warn(`updated account ${accountUpdated}`);
       return SuccessResponse(
         await this.repository.save(transaction),
         'Transaction Saved Successfully',
