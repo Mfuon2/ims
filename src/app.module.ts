@@ -9,6 +9,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { AssetsModule } from './assets/assets.module';
 import { TransformInterceptor } from './interceptors/response.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { BusinessModule } from './business/business.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     AccountsModule,
     TransactionsModule,
     AssetsModule,
+    BusinessModule,
   ],
   controllers: [],
   providers: [AppService, TypeOrmService, InvestorsModule, DocumentsModule],

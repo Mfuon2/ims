@@ -58,13 +58,8 @@ export class AssetsService {
   }
 
   async assetExists(asset_id: string): Promise<boolean> {
-    let check = false;
-    return await this.findOneAsset(asset_id).then((r) => {
-      if (r != null) {
-        check = true;
-        return check;
-      }
-    });
+    const asset = await this.findOneAsset(asset_id);
+    return asset.success;
   }
 
   async updateAsset(id: string, dto: UpdateAssetDto) {

@@ -6,6 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transaction } from './entities/transaction.entity';
 import { InvestorsModule } from '../investors/investors.module';
 import { AccountsModule } from '../accounts/accounts.module';
+import { AssetsModule } from '../assets/assets.module';
+import { DepositLogicService } from '../business/deposit-logic.service';
+import { BusinessModule } from '../business/business.module';
+
 
 @Module({
   controllers: [TransactionsController],
@@ -14,6 +18,8 @@ import { AccountsModule } from '../accounts/accounts.module';
     TypeOrmModule.forFeature([Transaction]),
     InvestorsModule,
     AccountsModule,
+    AssetsModule,
+    BusinessModule,
   ],
 })
 export class TransactionsModule {}
