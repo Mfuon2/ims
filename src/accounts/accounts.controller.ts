@@ -27,6 +27,11 @@ export class AccountsController {
     return await this.accountsService.findAllAccounts();
   }
 
+  @Get('/update_balances')
+  async updateBalances() {
+    return await this.accountsService.updateBalances();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.accountsService.findOneAccount(id);

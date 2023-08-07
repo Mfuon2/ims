@@ -47,7 +47,22 @@ export class AssetsService {
     let results = null;
     const assetId = new ObjectId(asset_id);
     try {
-      results = await this.repository.findOneBy({ _id: assetId });
+      results = await this.repository.findOneBy({ _id: assetId});
+      if (results == null) {
+        return FailResponse(results, `Error while checking up records`);
+      }
+      return SuccessResponse(results, `Success`);
+    } catch (e) {
+      return FailResponse(results, `Failed with error ${e.message}`);
+    }
+  }
+
+  async findAssetByClassCode(code: string): Promise<CustomApiResponse<Asset>> {
+    let results = null;
+    try {
+      results = await this.repository.findOneBy({
+        asset_share_classCode: code,
+      });
       if (results == null) {
         return FailResponse(results, `Error while checking up records`);
       }
