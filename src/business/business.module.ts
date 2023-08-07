@@ -4,9 +4,7 @@ import { AccountsModule } from '../accounts/accounts.module';
 import { AssetsModule } from '../assets/assets.module';
 
 @Module({
-  providers: [
-    DepositLogicService,
-  ],
+  providers: [DepositLogicService],
   imports: [AccountsModule, AssetsModule],
   exports: [DepositLogicService],
 })

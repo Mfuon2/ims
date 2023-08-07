@@ -4,11 +4,12 @@ import { AccountsController } from './accounts.controller';
 import { MongoRepository } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
+import { AssetsModule } from '../assets/assets.module';
 
 @Module({
   controllers: [AccountsController],
   providers: [AccountsService, MongoRepository<Account>],
-  imports: [TypeOrmModule.forFeature([Account])],
+  imports: [TypeOrmModule.forFeature([Account]), AssetsModule],
   exports: [AccountsService],
 })
 export class AccountsModule {}

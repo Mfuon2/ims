@@ -39,6 +39,6 @@ export class Account {
   is_active = false;
   @CreateDateColumn()
   created_at: Date;
-  @UpdateDateColumn()
   updated_at: Date;
+  balance_run_at: Date;
 }

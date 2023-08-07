@@ -18,6 +18,9 @@ export class Asset {
   @Column({ nullable: false })
   asset_name: string;
 
+  @Column({ type: 'double precision', default: 15.0 })
+  withholding_tax: number;
+
   @Column({ type: 'double precision', default: 0.0 })
   unit_price: number;
 

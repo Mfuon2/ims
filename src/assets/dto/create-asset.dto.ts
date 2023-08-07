@@ -15,4 +15,5 @@ export class CreateAssetDto {
   early_withdrawal_penalty: string;
   contribution_business_account: string;
   is_deleted: boolean;
+  withholding_tax: number;
 }

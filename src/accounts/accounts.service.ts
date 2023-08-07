@@ -1,20 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
-import {
-  CustomApiResponse,
-  FailResponse,
-  SuccessResponse,
-} from '../utils/response.wrapper';
-import { Account } from './entities/account.entity';
-import { ObjectId } from 'mongodb';
-import { dtoToEntity } from '../utils/inverstors.mapper';
-import { MongoRepository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable } from "@nestjs/common";
+import { CreateAccountDto } from "./dto/create-account.dto";
+import { UpdateAccountDto } from "./dto/update-account.dto";
+import { CustomApiResponse, FailResponse, SuccessResponse } from "../utils/response.wrapper";
+import { Account } from "./entities/account.entity";
+import { ObjectId } from "mongodb";
+import { dtoToEntity } from "../utils/inverstors.mapper";
+import { MongoRepository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { earnedCompoundedInterest } from "../business/interest-calculator.service";
+import { AssetsService } from "../assets/assets.service";
 import { log } from "../main";
 
 @Injectable()
 export class AccountsService {
+  @Inject()
+  private readonly assetService: AssetsService;
   constructor(
     @InjectRepository(Account)
     private readonly repository: MongoRepository<Account>,
@@ -102,5 +102,27 @@ export class AccountsService {
     } catch (e) {
       return FailResponse(null, `Error while removing account (${e.message})`);
     }
+  }
+
+  async updateBalances() {
+    const accounts = await this.repository.find({
+      where: { is_deleted: false, is_active: true },
+    });
+    const assets = await this.assetService.findAssetByClassCode('MMF');
+    const withholding_tax = assets.data.withholding_tax / 100;
+
+    for (const acc of accounts) {
+      const initialBalance = acc.balance;
+      log.warn(acc.balance);
+      const interest = await earnedCompoundedInterest(initialBalance, 11, 1);
+      const grossInterest = interest / 12;
+      const tax = (interest * withholding_tax) / 12;
+      const netInterest = grossInterest - tax;
+      acc.balance = initialBalance + netInterest;
+      acc.updated_at = new Date();
+      acc.balance_run_at = new Date();
+      await this.repository.save(acc);
+    }
+    return SuccessResponse({}, `Success for ${accounts.length} accounts`);
   }
 }
