@@ -14,7 +14,7 @@ import { ObjectId } from 'mongodb';
 import { AccountsService } from '../accounts/accounts.service';
 import { InvestorsService } from '../investors/investors.service';
 import { AssetsService } from '../assets/assets.service';
-import { log } from '../main';
+import { log, today } from "../main";
 import { DepositLogicService } from "../business/deposit-logic.service";
 
 @Injectable()
@@ -117,7 +117,7 @@ export class TransactionsService {
       if (!transaction) {
         return FailResponse(null, `Transaction not found`);
       }
-      transaction.updated_at = new Date();
+      transaction.updated_at = today;
       const result = await this.repository.updateOne(
         { _id: new ObjectId(id) },
         { $set: doc },
@@ -140,7 +140,7 @@ export class TransactionsService {
         return FailResponse(null, `Transaction not found`);
       }
 
-      transaction.updated_at = new Date();
+      transaction.updated_at = today;
       transaction.is_deleted = true;
 
       const result = await this.repository.save(transaction);

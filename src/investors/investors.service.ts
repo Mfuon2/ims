@@ -11,7 +11,7 @@ import {
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
-import { log } from '../main';
+import { log, today } from "../main";
 
 @Injectable()
 export class InvestorsService {
@@ -71,7 +71,7 @@ export class InvestorsService {
       if (!investor) {
         return FailResponse(null, `Investor not found`);
       }
-      investor.updated_at = new Date();
+      investor.updated_at = today;
       const results = await this.repository.findOneAndUpdate(
         { _id: new ObjectId(id) },
         { $set: doc },
@@ -91,7 +91,7 @@ export class InvestorsService {
         return FailResponse(null, `Investor not found`);
       }
 
-      investor.updated_at = new Date();
+      investor.updated_at = today;
       investor.is_deleted = true;
 
       const results = await this.repository.save(investor);

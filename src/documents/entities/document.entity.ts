@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+
 @Entity('documents')
 export class InvestorDocument {
   @ObjectIdColumn({ unique: true })
@@ -23,5 +24,5 @@ export class InvestorDocument {
   @CreateDateColumn()
   created_at: Date;
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at: any;
 }

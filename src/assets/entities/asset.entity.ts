@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+
 @Entity('assets')
 export class Asset {
   @ObjectIdColumn({ unique: true })
@@ -64,7 +65,7 @@ export class Asset {
   created_at: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at: any;
   @Column()
   is_deleted: boolean;
 }

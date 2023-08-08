@@ -10,7 +10,7 @@ import {
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
-import { log } from '../main';
+import { log, today } from "../main";
 import { dtoToEntity } from '../utils/inverstors.mapper';
 
 @Injectable()
@@ -84,7 +84,7 @@ export class AssetsService {
       if (!asset) {
         return FailResponse(null, `Asset not found`);
       }
-      asset.updated_at = new Date();
+      asset.updated_at = today;
       const results = await this.repository.save({ ...asset, ...doc });
       return SuccessResponse(results, `Asset updated successfully`);
     } catch (e) {
@@ -99,7 +99,7 @@ export class AssetsService {
         return FailResponse(null, `Asset not found`);
       }
 
-      asset.updated_at = new Date();
+      asset.updated_at = today;
       asset.is_deleted = true;
 
       const results = await this.repository.save(asset);
