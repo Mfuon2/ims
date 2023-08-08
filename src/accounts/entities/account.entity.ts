@@ -6,6 +6,7 @@ import {
   UpdateDateColumn
 } from "typeorm";
 
+
 @Entity('accounts')
 export class Account {
   @ObjectIdColumn({ unique: true })
@@ -39,6 +40,6 @@ export class Account {
   is_active = false;
   @CreateDateColumn()
   created_at: Date;
-  updated_at: Date;
-  balance_run_at: Date;
+  updated_at: any;
+  balance_run_at: any;
 }

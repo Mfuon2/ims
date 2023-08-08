@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+
 export class Withdrawal {
   withdrawal_narration: string;
   withdrawal_reference: string;
@@ -45,10 +46,10 @@ export class Transaction {
   @Column()
   withdraw: Withdrawal;
   @CreateDateColumn()
-  created_at: Date;
+  created_at: string;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at: any;
   is_deleted: boolean;
 }
 

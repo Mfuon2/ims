@@ -12,6 +12,7 @@ import {
   SuccessResponse,
 } from '../utils/response.wrapper';
 import { ObjectId } from 'mongodb';
+import { today } from "../main";
 
 @Injectable()
 export class DocumentsService {
@@ -65,7 +66,7 @@ export class DocumentsService {
   async updateDocument(id: string, dto: UpdateDocumentDto) {
     try {
       const doc = await dtoToEntity(dto, InvestorDocument);
-      doc.updated_at = new Date();
+      doc.updated_at = today;
       const results = await this.repository.findOneAndUpdate(
         { _id: new ObjectId(id) },
         { $set: doc },
@@ -81,7 +82,7 @@ export class DocumentsService {
       const existing = await this.repository.findOneBy({
         _id: new ObjectId(id),
       });
-      existing.updated_at = new Date();
+      existing.updated_at = today;
       existing.is_deleted = true;
       const results = await this.repository.findOneAndUpdate(
         { _id: new ObjectId(id) },

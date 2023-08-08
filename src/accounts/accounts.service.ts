@@ -7,14 +7,19 @@ import { ObjectId } from "mongodb";
 import { dtoToEntity } from "../utils/inverstors.mapper";
 import { MongoRepository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { earnedCompoundedInterest } from "../business/interest-calculator.service";
+import { dailyCompoundedInterest, monthlyCompoundedInterest } from "../business/interest-calculator.service";
 import { AssetsService } from "../assets/assets.service";
-import { log } from "../main";
+import { log, today } from "../main";
+import { Statement, StatementType } from "../statements/entities/statement.entity";
+import { StatementsService } from "../statements/statements.service";
 
 @Injectable()
 export class AccountsService {
   @Inject()
   private readonly assetService: AssetsService;
+
+  @Inject()
+  private readonly statementService: StatementsService;
   constructor(
     @InjectRepository(Account)
     private readonly repository: MongoRepository<Account>,
@@ -74,7 +79,7 @@ export class AccountsService {
       if (!account) {
         return FailResponse(null, `Account not found`);
       }
-      account.updated_at = new Date();
+      account.updated_at = today;
       const result = await this.repository.updateOne(
         { _id: new ObjectId(id) },
         { $set: doc },
@@ -94,7 +99,7 @@ export class AccountsService {
         return FailResponse(null, `Account not found`);
       }
 
-      account.updated_at = new Date();
+      account.updated_at = today;
       account.is_deleted = true;
 
       const result = await this.repository.save(account);
@@ -104,7 +109,51 @@ export class AccountsService {
     }
   }
 
-  async updateBalances() {
+  async updateMonthlyBalances() {
+    const accounts = await this.repository.find({
+      where: { is_deleted: false, is_active: true },
+    });
+    const assets = await this.assetService.findAssetByClassCode('MMF');
+    const withholding_tax = assets.data.withholding_tax / 100;
+
+    for (const acc of accounts) {
+      /*
+       * Save the account details
+       * */
+      const initialBalance = acc.balance;
+      log.warn(acc.balance);
+      const annualInterest = await monthlyCompoundedInterest(
+        initialBalance,
+        11 /* TODO: Include function to pull declared rated from backend https://github.com/Mfuon2/ims/issues/13 */,
+        1,
+      );
+      const grossInterest = annualInterest / 12;
+      const tax = (annualInterest * withholding_tax) / 12;
+      const netInterest = grossInterest - tax;
+      acc.balance = initialBalance + netInterest;
+      acc.updated_at = today;
+      acc.balance_run_at = today;
+      await this.repository.save(acc);
+
+      /*
+       * create a statement based on that account
+       * */
+      const statement = new Statement();
+      statement.account_id = acc._id;
+      statement.statement_type = StatementType.MONTHLY;
+      statement.opening_balance = initialBalance;
+      statement.withholding_tax = tax;
+      statement.annual_interest = annualInterest;
+      statement.gross_interest = grossInterest;
+      statement.net_interest = netInterest;
+      statement.closing_balance = acc.balance;
+      statement.created_at = today;
+      await this.statementService.createStatement(statement);
+    }
+    return SuccessResponse({}, `Success for ${accounts.length} accounts`);
+  }
+
+  async updateDailyBalances() {
     const accounts = await this.repository.find({
       where: { is_deleted: false, is_active: true },
     });
@@ -114,13 +163,13 @@ export class AccountsService {
     for (const acc of accounts) {
       const initialBalance = acc.balance;
       log.warn(acc.balance);
-      const interest = await earnedCompoundedInterest(initialBalance, 11, 1);
+      const interest = await dailyCompoundedInterest(initialBalance, 11);
       const grossInterest = interest / 12;
       const tax = (interest * withholding_tax) / 12;
       const netInterest = grossInterest - tax;
       acc.balance = initialBalance + netInterest;
-      acc.updated_at = new Date();
-      acc.balance_run_at = new Date();
+      acc.updated_at = today;
+      acc.balance_run_at = today;
       await this.repository.save(acc);
     }
     return SuccessResponse({}, `Success for ${accounts.length} accounts`);

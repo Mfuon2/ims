@@ -5,6 +5,7 @@ import { InvestorDocument } from '../documents/entities/document.entity';
 import { Asset } from '../assets/entities/asset.entity';
 import { Transaction } from '../transactions/entities/transaction.entity';
 import { Account } from '../accounts/entities/account.entity';
+import { Statement } from '../statements/entities/statement.entity';
 
 @Injectable()
 export class TypeOrmService implements TypeOrmOptionsFactory {
@@ -17,7 +18,14 @@ export class TypeOrmService implements TypeOrmOptionsFactory {
       username: 'investor',
       password: 'investor-Admin123',
       database: 'ims',
-      entities: [Investor, InvestorDocument, Asset, Transaction, Account],
+      entities: [
+        Investor,
+        InvestorDocument,
+        Asset,
+        Transaction,
+        Account,
+        Statement,
+      ],
     };
   }
 }

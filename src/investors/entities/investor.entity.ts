@@ -10,6 +10,7 @@ import {
 import { DataEncryptionTransformerConfig } from '../../utils/encryption.config';
 import { EncryptionTransformer } from 'typeorm-encrypted';
 
+
 @Entity('investors')
 export class Investor {
   @ObjectIdColumn({ unique: true })
@@ -56,9 +57,9 @@ export class Investor {
   @Column({ default: false })
   is_deleted = false;
   @CreateDateColumn()
-  created_at: Date;
+  created_at: string;
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at: any;
 }
 
 @Entity()

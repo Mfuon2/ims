@@ -3,10 +3,13 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import { initSwagger } from './utils/swagger.config';
 import { TransformInterceptor } from './interceptors/response.interceptor';
+import { LocalDateTime } from '@js-joda/core';
 
 export const log = new Logger(`Main.js`);
 const PORT = 3000;
 const HOSTNAME = 'localhost';
+process.env.TZ = 'Africa/Nairobi';
+export const today = LocalDateTime.now().toString();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new TransformInterceptor());
@@ -15,8 +18,9 @@ async function bootstrap() {
   });
   app.enableCors();
   await app.listen(PORT, HOSTNAME).then(() => {
-    log.log(`Server started on http://${HOSTNAME}:${PORT}`);
-    log.log(`APIs on http://${HOSTNAME}:${PORT}/api`);
+    log.log(`Server :  http://${HOSTNAME}:${PORT}`);
+    log.log(`APIs   :  http://${HOSTNAME}:${PORT}/api`);
+    log.log(`Time   :  ${today}`);
   });
 }
 

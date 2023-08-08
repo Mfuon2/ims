@@ -29,7 +29,7 @@ export class AccountsController {
 
   @Get('/update_balances')
   async updateBalances() {
-    return await this.accountsService.updateBalances();
+    return await this.accountsService.updateMonthlyBalances();
   }
 
   @Get(':id')
