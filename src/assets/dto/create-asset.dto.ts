@@ -1,6 +1,7 @@
 export class CreateAssetDto {
   asset_share_classCode: string;
   asset_name: string;
+  asset_declared_rate: number;
   unit_price: number;
   guaranteed_interest_rate: number;
   minimum_contribution: number;

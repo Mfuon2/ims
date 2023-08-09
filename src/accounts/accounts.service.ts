@@ -120,19 +120,24 @@ export class AccountsService {
       /*
        * Save the account details
        * */
-      const initialBalance = acc.balance;
+      const initialBalance = acc.balance + acc.temp_balance;
+      acc.temp_balance = 0;
       log.warn(acc.balance);
       const annualInterest = await monthlyCompoundedInterest(
         initialBalance,
         11 /* TODO: Include function to pull declared rated from backend https://github.com/Mfuon2/ims/issues/13 */,
         1,
       );
+      const unit_price = assets.data.unit_price;
       const grossInterest = annualInterest / 12;
       const tax = (annualInterest * withholding_tax) / 12;
       const netInterest = grossInterest - tax;
       acc.balance = initialBalance + netInterest;
       acc.updated_at = today;
       acc.balance_run_at = today;
+      acc.units = acc.balance / unit_price;
+      acc.cumulative_income = netInterest + acc.cumulative_income;
+      acc.market_value = acc.units * unit_price;
       await this.repository.save(acc);
 
       /*

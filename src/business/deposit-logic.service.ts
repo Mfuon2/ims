@@ -25,12 +25,8 @@ export class DepositLogicService {
         `Minimum deposit amount is ${asset.minimum_contribution}`,
       );
     }
-    const amount = transaction.amount;
-    const unit_price = asset.unit_price;
-    updateDto.unit_price = unit_price;
-    updateDto.balance = acc.balance + amount;
-    const units = amount / unit_price;
-    updateDto.units = acc.units + units;
+    updateDto.temp_balance = transaction.amount;
+    updateDto.deposits = acc.deposits + transaction.amount;
     await this.accountService.updateAccount(transaction.account_id, updateDto);
   }
 }

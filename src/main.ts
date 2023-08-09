@@ -6,10 +6,10 @@ import { TransformInterceptor } from './interceptors/response.interceptor';
 import { LocalDateTime } from '@js-joda/core';
 
 export const log = new Logger(`Main.js`);
-const PORT = 3000;
-const HOSTNAME = 'localhost';
 process.env.TZ = 'Africa/Nairobi';
 export const today = LocalDateTime.now().toString();
+const PORT = 3000;
+const HOSTNAME = 'localhost';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new TransformInterceptor());
