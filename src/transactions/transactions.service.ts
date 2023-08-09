@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { Transaction } from './entities/transaction.entity';
+import { Transaction, TransactionType } from './entities/transaction.entity';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -14,8 +14,8 @@ import { ObjectId } from 'mongodb';
 import { AccountsService } from '../accounts/accounts.service';
 import { InvestorsService } from '../investors/investors.service';
 import { AssetsService } from '../assets/assets.service';
-import { log, today } from "../main";
-import { DepositLogicService } from "../business/deposit-logic.service";
+import { log, today } from '../main';
+import { DepositLogicService } from '../business/deposit-logic.service';
 
 @Injectable()
 export class TransactionsService {
@@ -55,11 +55,10 @@ export class TransactionsService {
       if (!assets) {
         throw new NotFoundException(`Asset class was not found`);
       }
-      const accountUpdated = await this.depositLogic.updateInvestorAccount(
-        dto,
-        exist.data,
-      );
-      log.warn(`updated account ${accountUpdated}`);
+      if (transaction.transaction_type.match(TransactionType.DEPOSIT)) {
+        await this.depositLogic.updateInvestorAccount(dto, exist.data);
+      }
+
       return SuccessResponse(
         await this.repository.save(transaction),
         'Transaction Saved Successfully',

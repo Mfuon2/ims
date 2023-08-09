@@ -17,6 +17,7 @@ export class CreateAccountDto {
   withdrawals = 0.0;
 
   balance = 0.0;
+  temp_balance = 0.0;
 
   cumulative_income = 0.0;
 

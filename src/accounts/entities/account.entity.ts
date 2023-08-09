@@ -1,11 +1,10 @@
 import {
   Column,
-  CreateDateColumn, Entity,
+  CreateDateColumn,
+  Entity,
   Generated,
   ObjectIdColumn,
-  UpdateDateColumn
-} from "typeorm";
-
+} from 'typeorm';
 
 @Entity('accounts')
 export class Account {
@@ -19,13 +18,13 @@ export class Account {
   @Column({ nullable: false })
   investor_id: string;
   @Column()
-  units = 0.0;
+  units: number;
   @Column()
-  unit_price = 0.0;
+  unit_price: number;
   @Column()
-  market_value = 0.0;
+  market_value: number;
   @Column()
-  account_number = 0.0;
+  account_number: number;
   @Column()
   deposits = 0.0;
   @Column()
@@ -33,11 +32,13 @@ export class Account {
   @Column()
   balance = 0.0;
   @Column()
+  temp_balance = 0.0;
+  @Column()
   cumulative_income = 0.0;
   @Column()
   is_deleted: boolean;
   @Column()
-  is_active = false;
+  is_active: boolean;
   @CreateDateColumn()
   created_at: Date;
   updated_at: any;

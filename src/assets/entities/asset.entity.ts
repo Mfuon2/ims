@@ -7,7 +7,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-
 @Entity('assets')
 export class Asset {
   @ObjectIdColumn({ unique: true })
@@ -18,6 +17,8 @@ export class Asset {
 
   @Column({ nullable: false })
   asset_name: string;
+  @Column({ nullable: false })
+  asset_declared_rate: number;
 
   @Column({ type: 'double precision', default: 15.0 })
   withholding_tax: number;
@@ -63,8 +64,7 @@ export class Asset {
 
   @CreateDateColumn()
   created_at: Date;
-
-  @UpdateDateColumn()
+  @Column()
   updated_at: any;
   @Column()
   is_deleted: boolean;

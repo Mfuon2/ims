@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { DataEncryptionTransformerConfig } from '../../utils/encryption.config';
 import { EncryptionTransformer } from 'typeorm-encrypted';
+import { LocalDateTime } from "@js-joda/core";
 
 
 @Entity('investors')
@@ -83,9 +84,9 @@ export class InvestorAddressEntity {
   isActive = false;
   @Column({ nullable: false })
   investor_id: string;
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ default: LocalDateTime.now().toString() })
+  created_at: any;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ default: LocalDateTime.now().toString() })
+  updated_at: any;
 }
