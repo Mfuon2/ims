@@ -7,7 +7,7 @@ import { LocalDateTime } from '@js-joda/core';
 
 export const log = new Logger(`Main.js`);
 process.env.TZ = 'Africa/Nairobi';
-export const today = LocalDateTime.now().toString();
+export const today = LocalDateTime.now();
 const PORT = 3000;
 const HOSTNAME = 'localhost';
 async function bootstrap() {

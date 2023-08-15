@@ -2,27 +2,30 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  ObjectIdColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-
+  Generated, ManyToOne,
+  ObjectIdColumn, PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from "typeorm";
+import { Investor } from '../../investors/entities/investor.entity';
+import { LocalDateTime } from '@js-joda/core';
 
 @Entity('documents')
 export class InvestorDocument {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  _id: string;
+  @PrimaryGeneratedColumn('identity')
+  document_id: number;
   @Column()
   document_type: string;
-  @Column({ nullable: false })
-  investor_id: string;
   @Column()
   document_url: string;
   @Column({ default: false })
-  is_deleted = false;
+  is_deleted: boolean;
   @CreateDateColumn()
   created_at: Date;
   @UpdateDateColumn()
-  updated_at: any;
+  updated_at: LocalDateTime;
+
+  @ManyToOne(() => Investor, (investor) => investor.documents, {
+    onDelete: 'RESTRICT',
+  })
+  investor: Investor;
 }

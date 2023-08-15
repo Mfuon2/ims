@@ -6,6 +6,7 @@ import {
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { LocalDateTime } from "@js-joda/core";
 
 
 export class Withdrawal {
@@ -31,8 +32,8 @@ export class Transaction {
   _id: string;
   @Column()
   transaction_reference: string;
-  @Column()
-  amount = 0;
+  @Column({ default: 0 })
+  amount: number;
   @Column()
   transaction_type: TransactionType;
   @Column({ nullable: false })
@@ -41,15 +42,15 @@ export class Transaction {
   asset_id: string;
   @Column({ nullable: false })
   account_id: string;
-  @Column()
-  deposit: Deposit;
-  @Column()
-  withdraw: Withdrawal;
+  @Column({ default: false })
+  deposit: boolean;
+  @Column({ default: false })
+  withdraw: boolean;
   @CreateDateColumn()
   created_at: string;
 
   @UpdateDateColumn()
-  updated_at: any;
+  updated_at: LocalDateTime;
   is_deleted: boolean;
 }
 

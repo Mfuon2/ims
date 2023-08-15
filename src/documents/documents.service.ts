@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MongoRepository } from 'typeorm';
+import { MongoRepository, Repository } from 'typeorm';
 import { InvestorDocument } from './entities/document.entity';
 import { dtoToEntity } from '../utils/inverstors.mapper';
 import { InvestorsService } from '../investors/investors.service';
@@ -12,7 +12,7 @@ import {
   SuccessResponse,
 } from '../utils/response.wrapper';
 import { ObjectId } from 'mongodb';
-import { today } from "../main";
+import { today } from '../main';
 
 @Injectable()
 export class DocumentsService {
@@ -20,7 +20,7 @@ export class DocumentsService {
   private readonly userService: InvestorsService;
   constructor(
     @InjectRepository(InvestorDocument)
-    private readonly repository: MongoRepository<InvestorDocument>,
+    private readonly repository: Repository<InvestorDocument>,
   ) {}
   async createDocument(
     dto: CreateDocumentDto,
@@ -52,11 +52,13 @@ export class DocumentsService {
     }
   }
 
-  async findOneDocument(id: string): Promise<CustomApiResponse<InvestorDocument>> {
+  async findOneDocument(
+    id: string,
+  ): Promise<CustomApiResponse<InvestorDocument>> {
     let results = null;
     try {
-      const documentId = new ObjectId(id);
-      results = await this.repository.findOneBy({ _id: documentId });
+      const documentId = +id;
+      results = await this.repository.findOneBy({ document_id: documentId });
       return SuccessResponse(results, `Retrieved Successfully`);
     } catch (e) {
       return FailResponse(results, `Retrieving records failed`);
@@ -67,10 +69,7 @@ export class DocumentsService {
     try {
       const doc = await dtoToEntity(dto, InvestorDocument);
       doc.updated_at = today;
-      const results = await this.repository.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: doc },
-      );
+      const results = await this.repository.update({ document_id: +id }, doc);
       return SuccessResponse(results, `Document updated successfully`);
     } catch (e) {
       return FailResponse(null, `Error while updating document (${e.message})`);
@@ -80,14 +79,11 @@ export class DocumentsService {
   async removeDocument(id: string) {
     try {
       const existing = await this.repository.findOneBy({
-        _id: new ObjectId(id),
+        document_id: +id,
       });
       existing.updated_at = today;
       existing.is_deleted = true;
-      const results = await this.repository.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: existing },
-      );
+      const results = await this.repository.update({ document_id: +id }, existing);
       return SuccessResponse(results, `Document removed successfully`);
     } catch (e) {
       return FailResponse(null, `Error while updating document (${e.message})`);

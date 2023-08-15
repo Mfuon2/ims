@@ -7,11 +7,11 @@ import {
 export class CreateTransactionDto {
   transaction_reference: string;
   amount = 0;
-  transaction_type: TransactionType;
+  transaction_type: string;
   investor_id: string;
   asset_id: string;
   account_id: string;
-  deposit: Deposit;
-  withdraw: Withdrawal;
+  deposit: boolean;
+  withdraw: boolean;
   is_deleted: boolean;
 }

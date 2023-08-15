@@ -1,5 +1,5 @@
-import { Column, Entity, Generated, ObjectIdColumn } from 'typeorm';
-
+import { Column, CreateDateColumn, Entity, Generated, ObjectIdColumn } from "typeorm";
+import { LocalDateTime } from '@js-joda/core';
 
 @Entity('statements')
 export class Statement {
@@ -7,7 +7,7 @@ export class Statement {
   @Generated('uuid')
   _id: string;
   @Column()
-  account_id: string;
+  account_id: number;
 
   @Column()
   opening_balance: number;
@@ -26,8 +26,8 @@ export class Statement {
   closing_balance: number;
   @Column()
   statement_type: StatementType;
-  @Column()
-  created_at: any;
+  @CreateDateColumn()
+  created_at: LocalDateTime;
 }
 
 export enum StatementType {

@@ -5,18 +5,20 @@ import {
   Entity,
   Generated,
   ObjectIdColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { DataEncryptionTransformerConfig } from '../../utils/encryption.config';
 import { EncryptionTransformer } from 'typeorm-encrypted';
-import { LocalDateTime } from "@js-joda/core";
-
+import { LocalDateTime } from '@js-joda/core';
+import { Account } from '../../accounts/entities/account.entity';
+import { InvestorDocument } from '../../documents/entities/document.entity';
 
 @Entity('investors')
 export class Investor {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('identity')
+  investor_id: number;
 
   @Column({ name: 'full_name' })
   fullName: string;
@@ -33,22 +35,19 @@ export class Investor {
     name: 'mobile',
     unique: true,
     nullable: false,
-    transformer: new EncryptionTransformer(DataEncryptionTransformerConfig),
   })
   mobile: string;
 
   @Column({
     name: 'identity',
     nullable: false,
-    transformer: new EncryptionTransformer(DataEncryptionTransformerConfig),
   })
   identity: string;
   @Column({
     name: 'identity_type',
     nullable: false,
-    enum: ['NATIONAL_ID', 'PASSPORT', 'ALIEN_ID'],
   })
-  identity_type: string[];
+  identity_type: string;
 
   @Column({ name: 'dob', nullable: false })
   date_of_birth: Date;
@@ -56,37 +55,15 @@ export class Investor {
   @Column({ name: 'tax_number', nullable: false })
   tax_number: string;
   @Column({ default: false })
-  is_deleted = false;
+  is_deleted: boolean;
   @CreateDateColumn()
   created_at: string;
   @UpdateDateColumn()
-  updated_at: any;
-}
+  updated_at: LocalDateTime;
 
-@Entity()
-export class InvestorAddressEntity {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  address_id: string;
-  @Column()
-  street: string;
-  @Column()
-  city: string;
-  @Column()
-  physical_address: string;
-  @Column()
-  postal_address: string;
-  @Column()
-  mobile = false;
-  @Column()
-  phone = false;
-  @Column()
-  isActive = false;
-  @Column({ nullable: false })
-  investor_id: string;
-  @CreateDateColumn({ default: LocalDateTime.now().toString() })
-  created_at: any;
+  @OneToMany(() => Account, (acc) => acc.investor)
+  accounts: Account[];
 
-  @UpdateDateColumn({ default: LocalDateTime.now().toString() })
-  updated_at: any;
+  @OneToMany(() => InvestorDocument, (doc) => doc.investor)
+  documents: InvestorDocument[];
 }

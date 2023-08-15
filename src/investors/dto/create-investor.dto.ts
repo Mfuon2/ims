@@ -4,7 +4,7 @@ export class CreateInvestorDto {
   email: string;
   mobile: string;
   identity: string;
-  identity_type: string[];
+  identity_type: string;
   date_of_birth: Date;
   tax_number: string;
   is_deleted: boolean;
