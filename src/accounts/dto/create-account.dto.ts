@@ -23,5 +23,5 @@ export class CreateAccountDto {
 
   is_deleted: boolean;
 
-  is_active = false;
+  is_active: boolean;
 }

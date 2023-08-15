@@ -55,7 +55,12 @@ export class TransactionsService {
       if (!assets) {
         throw new NotFoundException(`Asset class was not found`);
       }
-      if (transaction.transaction_type.match(TransactionType.DEPOSIT)) {
+      log.warn(dto.transaction_type);
+      if (
+        dto.transaction_type
+          .toString()
+          .match(TransactionType.DEPOSIT.toString())
+      ) {
         await this.depositLogic.updateInvestorAccount(dto, exist.data);
       }
 

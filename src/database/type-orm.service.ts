@@ -11,13 +11,15 @@ import { Statement } from '../statements/entities/statement.entity';
 export class TypeOrmService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): Promise<TypeOrmModuleOptions> | TypeOrmModuleOptions {
     return {
-      type: 'mongodb',
-      url: 'mongodb://localhost:27017/ims',
+      type: 'postgres',
+      host: 'localhost',
+      port: 32768,
       synchronize: true,
       autoLoadEntities: true,
-      username: 'investor',
-      password: 'investor-Admin123',
-      database: 'ims',
+      username: 'postgres',
+      password: 'postgrespw',
+      database: 'app',
+      schema: 'public',
       entities: [
         Investor,
         InvestorDocument,

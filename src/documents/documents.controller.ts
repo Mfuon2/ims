@@ -18,6 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CustomApiResponse } from '../utils/response.wrapper';
+import { InvestorDocument } from "./entities/document.entity";
 
 @Controller('documents')
 @ApiTags('documents')
@@ -34,7 +35,7 @@ export class DocumentsController {
   })
   async create(
     @Body() createDocumentDto: CreateDocumentDto,
-  ): Promise<CustomApiResponse<CreateDocumentDto>> {
+  ): Promise<CustomApiResponse<any>> {
     return await this.documentsService.createDocument(createDocumentDto);
   }
 
@@ -59,7 +60,7 @@ export class DocumentsController {
   })
   async findOne(
     @Param('id') id: string,
-  ): Promise<CustomApiResponse<CreateDocumentDto>> {
+  ): Promise<CustomApiResponse<InvestorDocument>> {
     return await this.documentsService.findOneDocument(id);
   }
 

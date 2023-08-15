@@ -6,6 +6,7 @@ import {
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { LocalDateTime } from "@js-joda/core";
 
 @Entity('assets')
 export class Asset {
@@ -64,8 +65,8 @@ export class Asset {
 
   @CreateDateColumn()
   created_at: Date;
-  @Column()
-  updated_at: any;
+  @CreateDateColumn()
+  updated_at: LocalDateTime;
   @Column()
   is_deleted: boolean;
 }

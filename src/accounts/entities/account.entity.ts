@@ -2,21 +2,21 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  ObjectIdColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { LocalDateTime } from '@js-joda/core';
+import { Investor } from '../../investors/entities/investor.entity';
 
 @Entity('accounts')
 export class Account {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  _id: string;
+  @PrimaryGeneratedColumn('identity')
+  account_id: number;
   @Column({ nullable: false })
   asset_name: string;
   @Column({ nullable: false })
   asset_id: string;
-  @Column({ nullable: false })
-  investor_id: string;
   @Column()
   units: number;
   @Column()
@@ -26,21 +26,25 @@ export class Account {
   @Column()
   account_number: number;
   @Column()
-  deposits = 0.0;
+  deposits: number;
   @Column()
-  withdrawals = 0.0;
+  withdrawals: number;
   @Column()
-  balance = 0.0;
+  balance: number;
   @Column()
-  temp_balance = 0.0;
+  temp_balance: number;
   @Column()
-  cumulative_income = 0.0;
+  cumulative_income: number;
   @Column()
   is_deleted: boolean;
   @Column()
   is_active: boolean;
   @CreateDateColumn()
   created_at: Date;
-  updated_at: any;
-  balance_run_at: any;
+  @UpdateDateColumn()
+  updated_at: LocalDateTime;
+  balance_run_at: LocalDateTime;
+
+  @ManyToOne(() => Investor, (investor) => investor.accounts)
+  investor: Investor;
 }

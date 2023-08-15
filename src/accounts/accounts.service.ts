@@ -1,17 +1,27 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { CreateAccountDto } from "./dto/create-account.dto";
-import { UpdateAccountDto } from "./dto/update-account.dto";
-import { CustomApiResponse, FailResponse, SuccessResponse } from "../utils/response.wrapper";
-import { Account } from "./entities/account.entity";
-import { ObjectId } from "mongodb";
-import { dtoToEntity } from "../utils/inverstors.mapper";
-import { MongoRepository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
-import { dailyCompoundedInterest, monthlyCompoundedInterest } from "../business/interest-calculator.service";
-import { AssetsService } from "../assets/assets.service";
-import { log, today } from "../main";
-import { Statement, StatementType } from "../statements/entities/statement.entity";
-import { StatementsService } from "../statements/statements.service";
+import { Inject, Injectable } from '@nestjs/common';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
+import {
+  CustomApiResponse,
+  FailResponse,
+  SuccessResponse,
+} from '../utils/response.wrapper';
+import { Account } from './entities/account.entity';
+import { ObjectId } from 'mongodb';
+import { dtoToEntity } from '../utils/inverstors.mapper';
+import { MongoRepository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import {
+  dailyCompoundedInterest,
+  monthlyCompoundedInterest,
+} from '../business/interest-calculator.service';
+import { AssetsService } from '../assets/assets.service';
+import { log, today } from '../main';
+import {
+  Statement,
+  StatementType,
+} from '../statements/entities/statement.entity';
+import { StatementsService } from '../statements/statements.service';
 
 @Injectable()
 export class AccountsService {
@@ -80,10 +90,7 @@ export class AccountsService {
         return FailResponse(null, `Account not found`);
       }
       account.updated_at = today;
-      const result = await this.repository.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: doc },
-      );
+      const result = await this.repository.update(new ObjectId(id), doc);
       return SuccessResponse(result, `Account updated successfully`);
     } catch (e) {
       return FailResponse(null, `Error while updating account (${e.message})`);
@@ -144,7 +151,7 @@ export class AccountsService {
        * create a statement based on that account
        * */
       const statement = new Statement();
-      statement.account_id = acc._id;
+      statement.account_id = acc.account_id;
       statement.statement_type = StatementType.MONTHLY;
       statement.opening_balance = initialBalance;
       statement.withholding_tax = tax;
