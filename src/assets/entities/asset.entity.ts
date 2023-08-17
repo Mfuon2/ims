@@ -3,16 +3,15 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
-  ObjectIdColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  ObjectIdColumn, PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from "typeorm";
 import { LocalDateTime } from "@js-joda/core";
 
 @Entity('assets')
 export class Asset {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  _id: string;
+  @PrimaryGeneratedColumn('uuid')
+  asset_id: string;
   @Column({ unique: true, nullable: false })
   asset_share_classCode: string;
 

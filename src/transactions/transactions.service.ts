@@ -145,7 +145,6 @@ export class TransactionsService {
       }
 
       transaction.updated_at = today;
-      transaction.is_deleted = true;
 
       const result = await this.repository.save(transaction);
       return SuccessResponse(result, `Transaction removed successfully`);

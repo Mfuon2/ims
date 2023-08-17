@@ -61,9 +61,9 @@ export class Investor {
   @UpdateDateColumn()
   updated_at: LocalDateTime;
 
-  @OneToMany(() => Account, (acc) => acc.investor)
+  @OneToMany(() => Account, (acc) => acc.investor, { onDelete: 'CASCADE' })
   accounts: Account[];
 
-  @OneToMany(() => InvestorDocument, (doc) => doc.investor)
+  @OneToMany(() => InvestorDocument, (doc) => doc.investor ,{ onDelete: 'CASCADE'})
   documents: InvestorDocument[];
 }
