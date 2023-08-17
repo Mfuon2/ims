@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
-  ObjectIdColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { LocalDateTime } from "@js-joda/core";
-
+  ManyToOne,
+  ObjectIdColumn, PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from "typeorm";
+import { LocalDateTime } from '@js-joda/core';
+import { Investor } from '../../investors/entities/investor.entity';
+import { Account } from '../../accounts/entities/account.entity';
 
 export class Withdrawal {
   withdrawal_narration: string;
@@ -25,17 +27,21 @@ export class Deposit {
   payment_amount = 0.0;
 }
 
+export enum TransactionType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAW = 'WITHDRAW',
+}
+
 @Entity('transactions')
 export class Transaction {
-  @ObjectIdColumn({ unique: true })
-  @Generated('uuid')
-  _id: string;
+  @PrimaryGeneratedColumn('uuid')
+  transaction_id: number;
   @Column()
   transaction_reference: string;
   @Column({ default: 0 })
   amount: number;
-  @Column()
-  transaction_type: TransactionType;
+  @Column({ enum: TransactionType })
+  transaction_type: string;
   @Column({ nullable: false })
   investor_id: string;
   @Column({ nullable: false })
@@ -47,16 +53,12 @@ export class Transaction {
   @Column({ default: false })
   withdraw: boolean;
   @CreateDateColumn()
-  created_at: string;
+  created_at: LocalDateTime;
 
   @UpdateDateColumn()
   updated_at: LocalDateTime;
-  is_deleted: boolean;
-}
-
-export enum TransactionType {
-  DEPOSIT = 'DEPOSIT',
-  WITHDRAW = 'WITHDRAW',
+  @ManyToOne(() => Account, (acc) => acc.transactions)
+  account: Account;
 }
 
 enum PaymentType {
