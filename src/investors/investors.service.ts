@@ -11,7 +11,7 @@ import {
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
-import { today } from '../main';
+import { log, today } from '../main';
 
 @Injectable()
 export class InvestorsService {
@@ -46,8 +46,9 @@ export class InvestorsService {
   async findOneInvestor(investor_id: string): Promise<CustomApiResponse<any>> {
     let results = null;
     try {
-      results = await this.repository.findOneBy({ investor_id: +investor_id });
-      if (results == null) {
+      results = await this.repository.findOneBy({ investor_id: investor_id });
+      log.warn(`results.data ${results.data}`);
+      if (results.data === undefined) {
         return FailResponse(results, `Error while checking up records`);
       }
       return SuccessResponse(results, `Success`);
@@ -65,13 +66,13 @@ export class InvestorsService {
     try {
       const doc = await dtoToEntity(dto, Investor);
       const investor = await this.repository.findOneBy({
-        investor_id: +id,
+        investor_id: id,
       });
       if (!investor) {
         return FailResponse(null, `Investor not found`);
       }
       investor.updated_at = today;
-      const results = await this.repository.update({ investor_id: +id }, doc);
+      const results = await this.repository.update({ investor_id: id }, doc);
       return SuccessResponse(results, `Investor updated successfully`);
     } catch (e) {
       return FailResponse(null, `Error while updating investor (${e.message})`);

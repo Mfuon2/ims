@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,7 +16,7 @@ import { Transaction } from '../../transactions/entities/transaction.entity';
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   account_id: number;
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: false })
   asset_name: string;
   @Column({ nullable: false })
   asset_id: string;
@@ -48,6 +49,7 @@ export class Account {
   balance_run_at: LocalDateTime;
 
   @ManyToOne(() => Investor, (investor) => investor.accounts)
+  @JoinColumn({ name: 'investor_id' })
   investor: Investor;
 
   @OneToMany(() => Transaction, (transaction) => transaction.account)

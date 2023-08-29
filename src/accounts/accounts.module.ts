@@ -5,7 +5,8 @@ import { MongoRepository } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { AssetsModule } from '../assets/assets.module';
-import { StatementsModule } from "../statements/statements.module";
+import { StatementsModule } from '../statements/statements.module';
+import { InvestorsModule } from '../investors/investors.module';
 
 @Module({
   controllers: [AccountsController],
@@ -14,6 +15,7 @@ import { StatementsModule } from "../statements/statements.module";
     TypeOrmModule.forFeature([Account]),
     AssetsModule,
     StatementsModule,
+    InvestorsModule,
   ],
   exports: [AccountsService],
 })

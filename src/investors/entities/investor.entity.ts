@@ -17,8 +17,8 @@ import { InvestorDocument } from '../../documents/entities/document.entity';
 
 @Entity('investors')
 export class Investor {
-  @PrimaryGeneratedColumn('identity')
-  investor_id: number;
+  @PrimaryGeneratedColumn('uuid')
+  investor_id: string;
 
   @Column({ name: 'full_name' })
   fullName: string;
@@ -64,6 +64,8 @@ export class Investor {
   @OneToMany(() => Account, (acc) => acc.investor, { onDelete: 'CASCADE' })
   accounts: Account[];
 
-  @OneToMany(() => InvestorDocument, (doc) => doc.investor ,{ onDelete: 'CASCADE'})
+  @OneToMany(() => InvestorDocument, (doc) => doc.investor, {
+    onDelete: 'CASCADE',
+  })
   documents: InvestorDocument[];
 }

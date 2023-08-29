@@ -10,8 +10,13 @@ import {
   FailResponse,
   SuccessResponse,
 } from '../utils/response.wrapper';
-import { log, today } from "../main";
+import { log, today } from '../main';
 import { dtoToEntity } from '../utils/inverstors.mapper';
+import {
+  PageDto,
+  PageMetaDto,
+  PageOptionsDto,
+} from '../utils/pagination/page.dto';
 
 @Injectable()
 export class AssetsService {
@@ -34,9 +39,21 @@ export class AssetsService {
     }
   }
 
-  async findAllAssets(): Promise<CustomApiResponse<any>> {
+  async findAllAssets(
+    pageOptionsDto: PageOptionsDto,
+  ): Promise<CustomApiResponse<any>> {
     try {
-      const results = await this.repository.find();
+      const queryBuilder = this.repository.createQueryBuilder('assets');
+      queryBuilder
+        .orderBy('created_at', pageOptionsDto.order)
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.take);
+
+      const itemCount = await queryBuilder.getCount();
+      const { entities } = await queryBuilder.getRawAndEntities();
+
+      const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
+      const results = new PageDto(entities, pageMetaDto);
       return SuccessResponse(results, `Retrieved Successfully`);
     } catch (e) {
       return FailResponse(null, `Retrieving records failed`);
@@ -47,7 +64,7 @@ export class AssetsService {
     let results = null;
     const assetId = new ObjectId(asset_id);
     try {
-      results = await this.repository.findOneBy({ _id: assetId});
+      results = await this.repository.findOneBy({ _id: assetId });
       if (results == null) {
         return FailResponse(results, `Error while checking up records`);
       }

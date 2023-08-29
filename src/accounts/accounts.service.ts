@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import {
@@ -22,11 +22,20 @@ import {
   StatementType,
 } from '../statements/entities/statement.entity';
 import { StatementsService } from '../statements/statements.service';
+import {
+  PageDto,
+  PageMetaDto,
+  PageOptionsDto,
+} from '../utils/pagination/page.dto';
+import { InvestorsService } from '../investors/investors.service';
 
 @Injectable()
 export class AccountsService {
   @Inject()
   private readonly assetService: AssetsService;
+
+  @Inject()
+  private readonly investorService: InvestorsService;
 
   @Inject()
   private readonly statementService: StatementsService;
@@ -40,7 +49,15 @@ export class AccountsService {
   ): Promise<CustomApiResponse<Account>> {
     try {
       const account = await dtoToEntity(createAccountDto, Account);
-      console.warn(JSON.stringify(account));
+      const investor = await this.investorService.findOneInvestor(
+        createAccountDto.investor,
+      );
+
+      if (investor.data === null) {
+        throw new NotFoundException(`Investor not found`);
+      }
+
+      account.investor = investor.data;
       return SuccessResponse(
         await this.repository.save(account),
         'Account Saved Successfully',
@@ -50,9 +67,21 @@ export class AccountsService {
     }
   }
 
-  async findAllAccounts(): Promise<CustomApiResponse<Account[]>> {
+  async findAllAccounts(
+    pageOptionsDto: PageOptionsDto,
+  ): Promise<CustomApiResponse<PageDto<Account>>> {
     try {
-      const results = await this.repository.find();
+      const queryBuilder = this.repository.createQueryBuilder('accounts');
+      queryBuilder
+        .orderBy('created_at', pageOptionsDto.order)
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.take);
+
+      const itemCount = await queryBuilder.getCount();
+      const { entities } = await queryBuilder.getRawAndEntities();
+
+      const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
+      const results = new PageDto(entities, pageMetaDto);
       return SuccessResponse(results, `Accounts Retrieved Successfully`);
     } catch (e) {
       return FailResponse(null, `Retrieving accounts failed`);
@@ -63,9 +92,8 @@ export class AccountsService {
     account_id: string,
   ): Promise<CustomApiResponse<Account>> {
     let result = null;
-    const accountId = new ObjectId(account_id);
     try {
-      result = await this.repository.findOneBy({ _id: accountId });
+      result = await this.repository.findOneBy({ account_id: account_id });
       if (!result) {
         return FailResponse(result, `Account not found`);
       }
@@ -84,10 +112,10 @@ export class AccountsService {
     try {
       const doc = await dtoToEntity(dto, Account);
       const account = await this.repository.findOneBy({
-        _id: new ObjectId(id),
+        account_id: id,
       });
       if (!account) {
-        return FailResponse(null, `Account not found`);
+        throw new NotFoundException(`Account was not found`);
       }
       account.updated_at = today;
       const result = await this.repository.update(new ObjectId(id), doc);
@@ -100,10 +128,10 @@ export class AccountsService {
   async removeAccount(id: string): Promise<CustomApiResponse<any>> {
     try {
       const account = await this.repository.findOneBy({
-        _id: new ObjectId(id),
+        account_id: id,
       });
       if (!account) {
-        return FailResponse(null, `Account not found`);
+        throw new NotFoundException(`Account was not found`);
       }
 
       account.updated_at = today;
