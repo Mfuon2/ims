@@ -2,7 +2,7 @@
 export class CreateAccountDto {
   asset_name: string;
   asset_id: string;
-  investor_id: string;
+  investor: string;
 
   units = 0.0;
 

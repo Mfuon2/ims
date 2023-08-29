@@ -5,13 +5,14 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-} from '@nestjs/common';
+  Delete, Query
+} from "@nestjs/common";
 import { AssetsService } from './assets.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CustomApiResponse } from '../utils/response.wrapper';
+import { PageOptionsDto } from "../utils/pagination/page.dto";
 
 @ApiTags('assets')
 @Controller('assets')
@@ -40,8 +41,10 @@ export class AssetsController {
     isArray: true,
   })
   @Get()
-  async findAll(): Promise<CustomApiResponse<CreateAssetDto[]>> {
-    return await this.assetsService.findAllAssets();
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto,
+  ): Promise<CustomApiResponse<CreateAssetDto[]>> {
+    return await this.assetsService.findAllAssets(pageOptionsDto);
   }
 
   @ApiOperation({ summary: 'Get a single asset by ID' })

@@ -2,11 +2,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
-  ObjectIdColumn, PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { LocalDateTime } from "@js-joda/core";
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { LocalDateTime } from '@js-joda/core';
 
 @Entity('assets')
 export class Asset {

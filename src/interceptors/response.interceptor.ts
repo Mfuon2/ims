@@ -14,7 +14,6 @@ export interface Response<T> {
   error: string;
   message: string;
   statusCode: number;
-  meta: any;
   status: boolean;
 }
 
@@ -34,7 +33,6 @@ export class TransformInterceptor<T>
           message: data.message,
           error: '',
           data: data.data,
-          meta: {},
         };
         switch (response.statusCode) {
           case HttpStatus.OK:

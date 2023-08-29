@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { PageOptionsDto } from '../utils/pagination/page.dto';
 
 @Controller('accounts')
 @ApiTags('accounts')
@@ -23,8 +25,8 @@ export class AccountsController {
   }
 
   @Get()
-  async findAll() {
-    return await this.accountsService.findAllAccounts();
+  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
+    return await this.accountsService.findAllAccounts(pageOptionsDto);
   }
 
   @Get('/update_balances')

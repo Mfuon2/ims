@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { initSwagger } from './utils/swagger.config';
 import { TransformInterceptor } from './interceptors/response.interceptor';
 import { LocalDateTime } from '@js-joda/core';
@@ -13,6 +13,7 @@ const HOSTNAME = 'localhost';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await initSwagger(app).then(() => {
     log.log(`Initialised Swagger documentation`);
   });
